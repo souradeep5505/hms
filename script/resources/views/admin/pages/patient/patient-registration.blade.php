@@ -318,12 +318,12 @@
                 <div class="card-body">
                     <div class="col-11 col-sm-10 col-md-10 col-lg-12 col-xl-12 text-center p-0 mb-2">
                         <h2 id="heading">New Patient Registration</h2>
-                        <form id="msform">
+                        <form id="msform" action="{{route('patient-registration.store')}}" method="post" enctype="multipart/form-data">
                             <!-- progressbar -->
                             <ul id="progressbar">
                                 <li class="active" id="account"><strong>Account</strong></li>
-                                <li id="personal"><strong>Personal</strong></li>
-                                <li id="payment"><strong>Image</strong></li>
+                                <li id="personal"><strong>Date</strong></li>
+                                <li id="payment"><strong>Payment</strong></li>
                                 <li id="confirm"><strong>Finish</strong></li>
                             </ul>
                             <div class="progress">
@@ -336,7 +336,7 @@
                                         <div class="col-md-3">
                                             <label class="fieldlabels col-form-label"> First Name *</label>
                                             <input type="text" name="f_name" placeholder="First Name"
-                                                class="form-control" />
+                                                class="form-control" required/>
                                         </div>
                                         <div class="col-md-3">
                                             <label class="fieldlabels col-form-label"> Last Name</label>
@@ -345,7 +345,7 @@
                                         </div>
                                         <div class="col-md-1">
                                             <label class="fieldlabels col-form-label"> Gender *</label>
-                                            <select class="form-select" name="gender" id="floatingSelect" aria-label="Floating label select example">
+                                            <select class="form-select" name="gender" id="floatingSelect" aria-label="Floating label select example" required>
                                                 <option value="">Select</option>
                                                 <option value="male">Male</option>
                                                 <option value="female">Female</option>
@@ -353,7 +353,7 @@
                                         </div>
                                         <div class="col-md-2">
                                             <label class="fieldlabels col-form-label"> Marital Status *</label>
-                                            <select class="form-select" name="marital_status" id="floatingSelect" naria-label="Floating label select example">
+                                            <select class="form-select" name="marital_status" id="floatingSelect" naria-label="Floating label select example" required>
                                                 <option value="">Select</option>
                                                 <option value="1">Married</option>
                                                 <option value="2">Unmarried</option>
@@ -392,12 +392,12 @@
                                         </div>
                                         <div class="col-md-2">
                                             <label class="fieldlabels col-form-label"> DOB[dd/mm/yyyy]</label>
-                                            <input type="text" name="dob" placeholder="dd/mm/yyyy"
-                                                class="form-control" />
+                                            <input type="date" name="dob" placeholder="dd/mm/yyyy"
+                                                class="form-control" required/>
                                         </div>
                                         <div class="col-md-1">
                                             <label class="fieldlabels col-form-label"> Age *</label>
-                                            <input type="text" name="age" placeholder="Age" class="form-control" />
+                                            <input type="text" name="age" placeholder="Age" class="form-control" required/>
                                         </div>
                                         {{-- <div class="col-md-1">
                                             <label class="fieldlabels col-form-label"> Age: *</label>
@@ -429,18 +429,18 @@
                                                 <option selected>Select</option>
                                                 <option value="1">Doctor</option>
                                                 <option value="2">Teacher</option>
-                                                <option value="2">Engineer</option>
+                                                <option value="3">Engineer</option>
                                             </select>
                                         </div>
                                         <div class="col-md-3">
                                             <label class="fieldlabels col-form-label"> Mobile No *</label>
                                             <input type="text" name="mobile" placeholder="Mobile No"
-                                                class="form-control" />
+                                                class="form-control" required/>
                                         </div>
                                         <div class="col-md-3">
                                             <label class="fieldlabels col-form-label"> Email Id</label>
                                             <input type="email" name="email" placeholder="Email Id"
-                                                class="form-control" />
+                                                class="form-control" required/>
                                         </div>
                                         <div class="col-md-3">
                                             <label class="fieldlabels col-form-label"> Address</label>
@@ -450,34 +450,34 @@
                                     </div>
                                 </div>
                                 <input type="button" name="next" class="next action-button btn btn-primary btn-sm"
-                                    value="Save and continue" />
+                                    value="Save and Continue" />
                             </fieldset>
                             <fieldset>
                                 <div class="form-card">
                                     <div class="row">
                                         <div class="col-md-3">
-                                            <label class="fieldlabels col-form-label"> Dipartment *</label>
-                                            <select class="form-select" id="floatingSelect"
-                                            aria-label="Floating label select example">
-                                            <option selected>Select</option>
-                                            <option value="1">General Medicine</option>
-                                            <option value="2">E.N.T</option>
-                                            <option value="2">General Surgery</option>
+                                            <label class="fieldlabels col-form-label"> Department *</label>
+                                            <?php $departments=DB::table('departments')->where('status','1')->get(); ?>
+                                            <select name="depart_id" class="form-select" id="floatingSelect" aria-label="Floating label select example" required>
+                                            <option value="" selected>Select</option>
+                                            @foreach ( $departments as $dep)
+                                            <option value="{{$dep->id}}">{{$dep->name}}</option>
+                                            @endforeach
                                         </select>
                                         </div>
                                         <div class="col-md-3">
                                             <label class="fieldlabels col-form-label"> Doctor *</label>
-                                            <select class="form-select" id="floatingSelect"
-                                            aria-label="Floating label select example">
-                                            <option selected>Select</option>
-                                            <option value="1">Souradeep</option>
-                                            <option value="2">Natu Da</option>
-                                            <option value="2">Sanjay</option>
+                                            <?php $doctors=DB::table('doctors')->where('status','1')->get(); ?>
+                                            <select name="doc_id" class="form-select" id="floatingSelect" aria-label="Floating label select example" required>
+                                            <option value="" selected>Select</option>
+                                            @foreach ( $doctors as $doc)
+                                            <option value="{{$doc->id}}">{{ strtoupper($doc->f_name . ' ' . $doc->l_name) }} </option>
+                                            @endforeach
                                         </select>
                                         </div>
                                         <div class="col-md-2">
                                             <label class="fieldlabels col-form-label"> Day</label>
-                                            <input type="date" name="date"
+                                            <input type="date" name="book_date"
                                                 placeholder="date"class="form-control" />
                                         </div>
                                         <div class="col-md-2">
@@ -496,44 +496,45 @@
                                 <div class="form-card">
                                     <div class="row">
                                         <div class="col-md-2">
-                                            <label class="fieldlabels col-form-label"> Total Amount</label>
-                                            <input type="text" name="email" placeholder="Total Amount"
-                                                class="form-control" />
+                                            <label class="fieldlabels col-form-label"> Total Amount *</label>
+                                            <input type="text" name="fees" placeholder="Total Amount"
+                                                class="form-control" required/>
                                         </div>
                                         <div class="col-md-2">
-                                            <label class="fieldlabels col-form-label"> Paid Amount</label>
-                                            <input type="text" name="uname" placeholder="Paid Amount"
-                                                class="form-control" />
+                                            <label class="fieldlabels col-form-label"> Paid Amount *</label>
+                                            <input type="text" name="total_amount" placeholder="Paid Amount"
+                                                class="form-control" required/>
                                         </div>
                                         <div class="col-md-1">
                                             <label class="fieldlabels col-form-label"> Discount</label>
-                                            <input type="text" name="uname" placeholder="Discount"
+                                            <input type="text" name="discount" placeholder="Discount"
                                                 class="form-control" />
                                         </div>
                                         <div class="col-md-1">
                                             <label class="fieldlabels col-form-label"> Due</label>
-                                            <input type="text" name="uname" placeholder="Due"
+                                            <input type="text" name="due" placeholder="Due"
                                                 class="form-control" />
                                         </div>
                                         <div class="col-md-3">
                                             <label class="form-check-label radio2" for="flexRadioDefault1">Payment
                                                 Method</label>
-                                            <input class="form-check-input radio" type="radio" name="flexRadioDefault"
-                                                id="flexRadioDefault1">
+                                            <input class="form-check-input radio" type="radio" name="payment_method"
+                                                id="flexRadioDefault1" value="cash">
                                             <i class="fa fa-inr" aria-hidden="true">&nbsp;Cash</i>
-                                            <input class="form-check-input radio" type="radio" name="flexRadioDefault"
-                                                id="flexRadioDefault1">
+                                            <input class="form-check-input radio" type="radio" name="payment_method"
+                                                id="flexRadioDefault1" value="card">
                                             <i class="fa fa-credit-card" aria-hidden="true">&nbsp;Card</i>
                                         </div>
                                         <div class="col-md-3">
                                             <label class="fieldlabels col-form-label"> Comments</label>
-                                            <input type="text" name="uname" placeholder="UserName"
+                                            <input type="text" name="comments" placeholder="UserName"
                                                 class="form-control" />
                                         </div>
                                     </div>
                                 </div>
-                                <input type="button" name="next" class="next action-button btn btn-primary btn-sm"
-                                    value="Submit" />
+                                {{-- <input type="button" name="next" class="next action-button btn btn-primary btn-sm"
+                                    value="Submit" /> --}}
+                                    <button type="submit" class="btn btn-primary btn-sm mt-2" style="float: right;">Submit</button>
                                 <input type="button" name="previous"
                                     class="previous action-button-previous btn btn-sm btn-info" value="Previous" />
                             </fieldset>

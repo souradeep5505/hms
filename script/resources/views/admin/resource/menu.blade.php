@@ -115,6 +115,11 @@
                 <span class="menu-title">Doctor</span></a>
         </li>
         <li class="nav-item">
+            <a href="{{ route('patient-registration.index') }}" class="nav-link">
+                <i class="mdi mdi-chart-bar menu-icon"></i>
+                <span class="menu-title">Register Patient</span></a>
+        </li>
+        <li class="nav-item">
             <a href="http://www.bootstrapdash.com/demo/purple/jquery/documentation/documentation.html" "="" class="nav-link" target="_blank">
               <i class="mdi mdi-file-document-box menu-icon"></i>
               <span class="menu-title">Documentation</span></a>

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->integer('org_id')->nullable();
             $table->integer('doc_id')->nullable();
-            $table->enum('opt',['day','week','month'])->comment('day->day week->week month->month');
+            $table->enum('opt',['day','week','month'])->comment('day->day week->week month->month')->nullable();
             $table->string('value')->nullable();
             $table->string('slot')->nullable();
             $table->enum('status',['0','1'])->comment('0->Inactive 1->Active');

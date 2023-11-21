@@ -1,6 +1,11 @@
 @extends('admin.resource.main')
 @section('title', 'List Doctor')
 @section('content')
+<style>
+    .form-check-input{
+        margin-top:0px;
+    }
+</style>
 <div class="row">
     <div class="col-lg-12 grid-margin stretch-card">
         <div class="card">

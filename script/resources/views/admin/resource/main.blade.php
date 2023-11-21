@@ -27,7 +27,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         .table td {
-            padding: 2px 10px !important;
+            padding: 10px !important;
         }
         .table th {
             padding: 10px !important;
@@ -72,7 +72,7 @@
         </div>
         <!-- partial -->
         <div class="container-fluid page-body-wrapper ">
-            <div class="main-panel ">
+            <div class="main-panel">
                 <div class="content-wrapper">
                     @yield('content')
                 </div>

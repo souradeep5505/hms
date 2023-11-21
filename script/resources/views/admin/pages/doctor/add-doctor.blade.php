@@ -74,6 +74,7 @@
 </style>
 @section('content')
 <form action="{{route('doctor.store')}}" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="value" value="{}">
     <div class="row">
         <div class="col-lg-12 mx-auto">
             <div class="card dr-pro-pic">

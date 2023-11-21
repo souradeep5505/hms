@@ -1,232 +1,267 @@
 @extends('admin.resource.main')
 @section('title', 'Doctor Timetable')
+<?php
+// $opt = null;
+$values = DB::table('doctors_times')
+    ->where('doc_id', $doctrs->id)
+    ->where('status', '1')
+    ->first();
+
+$valueArray = json_decode($values->value, true);
+
+if (!empty($values->opt) && ($values->opt == 'day' || $values->opt == 'week')) {
+    $opV = $values->opt;
+    $jVals = json_decode($values->value);
+    //dump($jVals);
+    $dataVal = isset($jVals->$opV) ? $jVals->$opV : [];
+    //dump($dataVal);
+} else {
+    $opV = '';
+    $dataVal = [];
+}
+?>
 
 @section('content')
-<style>
-    .select2-container {
-        display: block;
+    <style>
+        .select2-container {
+            display: block;
+        }
+
+        .select2-container--default .select2-selection--multiple .select2-selection__choice {
+            font-size: 0.800rem;
+        }
+
+        .table th {
+            padding: 5px !important;
+        }
+    </style>
+    <script>
+        $(function() {
+            $('#day').hide();
+            $('#week').hide();
+            $('#ttable').hide();
+            //$('#sbutton').hide();
+            var data = '{{ !empty($values->opt) ? $values->opt : '' }}';
+            var data2 = '{{ !empty($dataVal) ? true : ''}}' ;
+
+            if (data != '') {
+                $('#' + data).show();
+                //$('#sbutton').show();
+                document.getElementById("sbutton").style.display = 'block';
+            }
+
+            if(data2 !=''){
+                $('#ttable').show();
+            }
+
+            $('#selector').change(function() {
+                var selectedOption = $(this).val();
+                // alert(selectedOption);
+
+                if (selectedOption == '') {
+                    $('#day').hide();
+                    $('#week').hide();
+                    $('#ttable').hide();
+                    $('#sbutton').hide();
+                } else {
+                    $('#day').hide();
+                    $('#week').hide();
+                    $('#ttable').hide();
+                    $('#sbutton').hide();
+                    $('#' + selectedOption).show();
+
+                }
+            });
+
+
+        //     $("#settime").click(function () {
+
+        //     var opt = $('#selector').val();
+        //     var mulval;
+
+        //     if (opt === 'day') {
+        //         mulval = $('#selectMultipleDay').val().join(',');
+        //     } else if (opt === 'week') {
+        //         mulval = $('#selectMultipleWeek').val().join(',');
+        //     }
+
+        //     var nameArr = mulval.split(',');
+
+        //     console.log(nameArr);
+
+        //     $('#ttable').show();
+
+        //     var table = $("#jsTable");
+        //     document.getElementById("sbutton").style.display = 'block';
+        //     // Clear existing rows before adding new ones
+        //     table.empty();
+
+        //     // Create a new <tr> element for each item in nameArr
+        //     for (var i = 0; i < nameArr.length; i++) {
+
+        //         var hiddenInput = $("<input>").attr({
+        //         type: "hidden",
+        //         name: "counter_section" + (i + 1),
+        //         value: 1,
+        //         id: "counter_section" + (i + 1),
+        //         });
+
+        //         var newRow = $("<tr>");
+
+        //         var resultCell = $("<td>").text(i + 1);
+
+        //         var nameCell = $("<td>").text(nameArr[i]);
+
+        //         var inputCell1 = $("<td>").append(
+        //             $("<input>").attr({
+        //                 type: "time",
+        //                 class: "form-control",
+        //                 name: "start_time" + (i + 1) + '_' + 1
+        //             })
+        //         ).append("<br>");
+
+        //         inputCell1.append(
+        //             $("<div>").attr({
+        //                 id: "start_time" + (i + 1) + '_' + 1
+        //             })
+        //         );
+
+        //         var inputCell2 = $("<td>").append(
+        //             $("<input>").attr({
+        //                 type: "time",
+        //                 class: "form-control",
+        //                 name: "end_time" + (i + 1) + '_' + 1
+        //             })
+        //         ).append("<br>");
+
+        //         inputCell2.append(
+        //             $("<div>").attr({
+        //                 id: "end_time" + (i + 1) + '_' + 1
+        //             })
+        //         );
+
+        //         var buttonCell = $("<td>").append(
+        //             $("<button>").attr({
+        //                 type: "button",
+        //                 class: "btn btn-success btn-sm px-2",
+        //                 onclick: "addTime('" + (i + 1) + "')"
+        //             }).text("Add Time")
+        //         );
+
+        //         newRow.append(resultCell, nameCell, inputCell1, inputCell2, buttonCell,hiddenInput);
+
+        //         table.append(newRow);
+        //     }
+
+        // });
+
+
+        $("#settime").click(function () {
+    var opt = $('#selector').val();
+    var mulval;
+
+    if (opt === 'day') {
+        mulval = $('#selectMultipleDay').val().join(',');
+    } else if (opt === 'week') {
+        mulval = $('#selectMultipleWeek').val().join(',');
     }
 
-    .select2-container--default .select2-selection--multiple .select2-selection__choice {
-        font-size: 0.800rem;
-    }
+    var nameArr = mulval.split(',');
 
-    .table th {
-        padding: 5px !important;
-    }
-</style>
+    console.log(nameArr);
 
-    {{-- <form action="{{url('doctime/'.$doctrs->id)}}" method="post" enctype="multipart/form-data"> --}}
-        <form action="" method="get" enctype="multipart/form-data">
-        <div class="row">
-            <div class="col-lg-12 mx-auto">
-                <div class="card dr-pro-pic">
-                    <div class="card-body">
-                        <h4 class="card-title">{{strtoupper($doctrs->f_name.' '.$doctrs->l_name)}} Timeing:</h4>
-                        <div class="col-md-12">
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <div class="input-group">
-                                        <select class="form-select" id="selector" name="opt">
-                                            <option value="">Select Option</option>
-                                            <option value="day" @selected($request->opt=='day')>Day</option>
-                                            <option value="week" @selected($request->opt=='week')>Week</option>
-                                            <option value="month" @selected($request->opt=='month')>Month</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-8 showhide" id="day">
-                                    <select name="day[]" id="selectMultipleDay" class="form-control" multiple="multiple"
-                                        data-placeholder="Select Day">
-                                        <option value="">Select Day</option>
-                                        @for ($day = 1; $day <= 31; $day++)
-                                            <option value="{{ $day }}">{{ $day }}</option>
-                                        @endfor
-                                    </select>
-                                </div>
-                                <div class="col-md-8 showhide" id="week">
-                                    <select name="week[]" id="selectMultipleWeek" class="form-control" multiple="multiple"
-                                        data-placeholder="Select Week">
-                                        <option value="">Select Week</option>
-                                        @for ($wk = 1; $wk <= 7; $wk++)
-                                            <option value="{{ $wk }}">{{ Helper::weekDays($wk) }}</option>
-                                        @endfor
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-12">
-                                <input type="hidden" name="counter_sec" id="counter_sec" value="1">
+    $('#ttable').show();
 
-                                <table class="table table-bordered table-responsive showhide mt-4" id="month">
-                                    <thead>
-                                        <tr>
-                                            <th style="width: 15%">Months</th>
-                                            <th style="width: 15%">Day/Week</th>
-                                            <th style="width: 60%">Chose</th>
-                                            <th style="width: 10%"><button type="button"
-                                                    class="btn btn-success btn-sm px-2" onclick="addRow()"
-                                                    style="float: right;"><i class="fas fa-plus"></i>&nbsp;Add</button></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>
-                                                <select class="form-select" name="month1">
-                                                    <option value="">Select Month</option>
-                                                    @for ($mon = 1; $mon <= 12; $mon++)
-                                                        <option value="{{ $mon }}">{{ Helper::months($mon) }}
-                                                        </option>
-                                                    @endfor
-                                                </select>
-                                            </td>
-                                            <td>
-                                                <select name="mulopt1" class="form-select"
-                                                    onchange="selectMulOpt(this.value,'1')">
-                                                    <option value="">Select Option</option>
-                                                    <option value="day">Day</option>
-                                                    <option value="week">Week</option>
-                                                </select>
-                                            </td>
-                                            <td colspan="2">
-                                                <div id="mulDay1" style="display: none;">
-                                                    <select name="mul_day1[]" id="selectMultipleDay1" class="form-control"
-                                                        multiple="multiple" data-placeholder="Select Day">
-                                                        <option value="">Select Day</option>
-                                                        @for ($day = 1; $day <= 31; $day++)
-                                                            <option value="{{ $day }}">{{ $day }}</option>
-                                                        @endfor
-                                                    </select>
-                                                </div>
-                                                <div id="mulWeek1" style="display: none;">
-                                                    <select name="mul_week1[]" id="selectMultipleWeek1" class="form-control"
-                                                        multiple="multiple" data-placeholder="Select Week">
-                                                        <option value="">Select Week</option>
-                                                        @for ($wk = 1; $wk <= 7; $wk++)
-                                                            <option value="{{ $wk }}">{{ Helper::weekDays($wk) }}
-                                                            </option>
-                                                        @endfor
-                                                    </select>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    <tbody id="times"></tbody>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <button class="btn btn-primary btn-sm px-2 mt-3 mb-0 btnhid" style="float: right;">Choose Time</button>
-                        </div>
-                        <div class="col-md-12" style="display: block;" id="ttable">
-                       @if (!empty($request->opt))
-                       <?php
-                       if (!empty($request->day)){
-                           $datas=$request->day;
-                           $tl="Day";
-                           $type='day';
-                       }elseif (!empty($request->week)){
-                           $datas=$request->week;
-                           $tl="Week";
-                           $type='week';
-                       }elseif(!empty($request->month1)){
-                        $month=[];
-                        $day=[];
-                        $week=[];
-                        for($c=1;$c<=$request->counter_sec;$c++){
-                            $dm="month".$c;
-                            $mulOpt_dis="mulopt".$c;
-                            $mulDay_dis="mul_day".$c;
-                            //echo $request->$dm;
-                            array_push($month, ($request->$dm));
+    var table = $("#jsTable");
+    document.getElementById("sbutton").style.display = 'block';
 
-                            if($request->$mulOpt_dis=="day"){
-                                //dump($request->$mulDay_dis);
-                                array_push($day, ($request->$mulDay_dis));
-                            }
-                        }
-                       // $month='month'.$request->counter_sec
-                           $datas=array_merge($month);
-                           $day_datas=array_merge($day);
-                           $tl="Month";
-                           $type='month';
-                           dump($day_datas);
-                          // die;
-                       }
-                       //dump($month);
-                      // die;
-                        $t=1;
-                       ?>
+    // Get the existing items in the table
+    var existingItems = table.find('td:nth-child(2)').map(function () {
+        return $(this).text();
+    }).get();
 
-                            <div class="row">
-                            <table class="table table-bordered table-responsive mt-4" id="">
-                                <thead>
-                                    <tr>
-                                        <th style="width: 5%">#</th>
-                                        <th style="width: 45%">{{$tl}}</th>
-                                        <th style="width: 20%">Open Time</th>
-                                        <th style="width: 20%">Close Time</th>
-                                        <th style="width: 10%">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <input type="hidden" name="counter_section" id="counter_section" value="1">
+    // Filter out the items that are already in the table
+    var newItems = nameArr.filter(function (item) {
+        return existingItems.indexOf(item) === -1;
+    });
 
-                                    @foreach($datas as $data)
-                                    <tr>
-                                        <td>{{$t}}</td>
-                                        <td>
-                                            @if($type=='day')
-                                            {{$data}}
-                                            @elseif($type=='week')
-                                            {{ Helper::weekDays($data) }}
-                                            @elseif($type=='month')
-                                            {{ Helper::months($data) }}
-                                            @if($request->$mulOpt_dis=="day")
-                                            @foreach ($day_datas as $day_item)
-                                                <?php //dump($day_item); ?>
-                                                {{$day_item}}
-                                            @endforeach
-                                            @endif
-                                            @endif
+    // Create a new <tr> element for each new item
+    newItems.forEach(function (itemName, i) {
+        var hiddenInput = $("<input>").attr({
+            type: "hidden",
+            name: "counter_section" + (i + 1),
+            value: 1,
+            id: "counter_section" + (i + 1),
+        });
 
-                                        </td>
-                                        <td>
-                                            <input type="time" class="form-control" name="">
-                                            <br>
-                                            <div id="start_time{{$t}}"></div>
-                                        </td>
-                                        <td>
-                                            <input type="time" class="form-control" name="">
-                                            <br>
-                                            <div id="end_time{{$t}}"></div>
-                                        </td>
-                                        <td><button type="button" class="btn btn-success btn-sm px-2" onclick="addTime('{{$t}}')" style="float: right;"><i class="fas fa-plus"></i>&nbsp;Add</button>
-                                        </td>
-                                    </tr>
-                                    <?php $t++; ?>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                            </div>
+        var newRow = $("<tr>");
 
-                        @endif
-                    </div>
-                    </div>
-                    <!--end card-body-->
-                </div>
-                <!--end card-->
-            </div>
-            <!--end col-->
-        </div>
-    </form>
+        var resultCell = $("<td>").text(i + 1);
+
+        var nameCell = $("<td>").text(itemName);
+
+        var inputCell1 = $("<td>").append(
+            $("<input>").attr({
+                type: "time",
+                class: "form-control",
+                name: "start_time" + (i + 1) + '_' + 1
+            })
+        ).append("<br>");
+
+        inputCell1.append(
+            $("<div>").attr({
+                id: "start_time" + (i + 1) + '_' + 1
+            })
+        );
+
+        var inputCell2 = $("<td>").append(
+            $("<input>").attr({
+                type: "time",
+                class: "form-control",
+                name: "end_time" + (i + 1) + '_' + 1
+            })
+        ).append("<br>");
+
+        inputCell2.append(
+            $("<div>").attr({
+                id: "end_time" + (i + 1) + '_' + 1
+            })
+        );
+
+        var buttonCell = $("<td>").append(
+            $("<button>").attr({
+                type: "button",
+                class: "btn btn-success btn-sm px-2",
+                onclick: "addTime('" + (i + 1) + "')"
+            }).text("Add Time")
+        );
+
+        newRow.append(resultCell, nameCell, inputCell1, inputCell2, buttonCell, hiddenInput);
+
+        table.append(newRow);
+    });
+});
+
+
+
+
+
+
+
+
+
+        });
+    </script>
 
     <script>
         document.addEventListener('click', function(event) {
-            if (event.target.classList.contains('remove-button')) {
-                removeRow(event.target);
+            if (event.target.classList.contains('remove-button1')) {
+                removeTime(event.target);
             }
         });
 
-        function removeRow(button) {
-            var table = document.getElementById('times');
+        function removeTime(button) {
+            var table = document.getElementById('timest');
             var row = button.closest('tr');
 
             if (row) {
@@ -235,20 +270,22 @@
                 document.getElementById('counter_sec').value = (counterSec - 1);
             }
         }
-        var addRow = function() {
+        var addTime = function(p) {
             // document.getElementById('add').disabled = true;
-            let counterSec = Number(document.getElementById('counter_sec').value);
+            let counterSec = Number(document.getElementById('counter_section'+p).value);
             // counter = row.length;
             $.ajax({
-                url: "{{ url('ajaxdoctortime') }}",
+                url: "{{ url('ajaxdoctimetable') }}",
                 type: 'GET',
                 data: {
-                    'call': (counterSec + 1),
+                    'call': (counterSec + 1), 'p': p,
                 },
-                dataType: 'html',
+                // dataType: 'html',
                 success: function(data) {
-                    $('#times').append(data);
-                    document.getElementById('counter_sec').value = (counterSec + 1);
+                   // console.log(data[0]);
+                   $('#start_time'+p+'_1').append(data[0]);
+                   $('#end_time'+p+'_1').append(data[1]);
+                    document.getElementById('counter_section'+p).value = (counterSec + 1);
                     // document.getElementById('add').disabled = false;
                 },
                 error: function(request, error) {
@@ -257,115 +294,203 @@
                 }
             });
         }
+
     </script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.js"></script>
-    <script>
-        function selectMulOpt(vals, id) {
-            // alert(vals);
+ <form action="{{url('doctime/'.$doctrs->id)}}" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="opt" value="{{$request->opt}}">
+    <input type="hidden" name="day" value="{{json_encode($request->day)}}">
+    <input type="hidden" name="week" value="{{json_encode($request->week)}}">
+    {{-- <input type="hidden" name="counter_sect" value="{{$request->counter_sec}}"> --}}
+    <input type="hidden" name="doc_id" value="{{$doctrs->id}}">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card dr-pro-pic">
+                <div class="card-body">
+                    <h4 class="card-title">{{ strtoupper($doctrs->f_name . ' ' . $doctrs->l_name) }} Timing:</h4>
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="input-group">
+                                    <select class="form-select" id="selector" name="opt">
+                                        <option value="">Select Option</option>
+                                        <option value="day" @selected($request->opt == 'day' || (!empty($values->opt) && $values->opt == 'day'))>Date</option>
+                                        <option value="week" @selected($request->opt == 'week' || (!empty($values->opt) && $values->opt == 'week'))>Day</option>
+                                    </select>
+                                </div>
+                            </div>
 
-            if (vals == "day") {
-                document.getElementById("mulDay" + id).style.display = 'block';
-                document.getElementById("mulWeek" + id).style.display = 'none';
-            } else if (vals == "week") {
-                document.getElementById("mulWeek" + id).style.display = 'block';
-                document.getElementById("mulDay" + id).style.display = 'none';
-            } else {
-                document.getElementById("mulDay" + id).style.display = 'none';
-                document.getElementById("mulWeek" + id).style.display = 'none';
-            }
+                            <div class="col-md-8" id="day">
+                                <select name="day[]" id="selectMultipleDay" class="form-control" multiple="multiple"
+                                    data-placeholder="Select Day" selected-value="1">
+                                    <option value="">Select Day</option>
+                                    @for ($day = 1; $day <= 31; $day++)
+                                        <option value="{{ $day }}"
+                                            @if ($opV == 'day' && in_array($day, $dataVal)) selected @endif>{{ $day }}
+                                        </option>
+                                     @endfor
+                                </select>
+                            </div>
 
-        }
-        $(function() {
-            $('.showhide').hide();
-            $('.showmonth').hide();
-            $('.showday').hide();
-            $('.month').hide();
-            $('.btnhid').hide();
-            //   $('.add').hide();
+                            <div class="col-md-8" id="week">
+                                <select name="week[]" id="selectMultipleWeek" class="form-control" multiple="multiple"
+                                    data-placeholder="Select Week">
+                                    <option value="">Select Week</option>
+                                    @for ($wk = 1; $wk <= 7; $wk++)
+                                        <option value="{{ $wk }}"
+                                            @if ($opV == 'week' && in_array($wk, $dataVal)) selected @endif>{{ Helper::weekDays($wk) }}
+                                        </option>
+                                    @endfor
+                                </select>
+                            </div>
+                        </div>
 
-            $('#selector').change(function() {
-                var selectedOption = $(this).val();
-                // alert(selectedOption);
-                document.getElementById('ttable').style.display='none';
-                if (selectedOption == '') {
-                    $('.showhide').hide();
-                    $('.showday').hide();
-                    $('.showmonth').hide();
-                    $('.month').hide();
-                    $('.thide').hide();
-                    $('.add').hide();
-                    $('.btnhid').hide();
-                } else {
-                    $('.showhide').hide();
-                    $('.thide').hide();
-                    $('.add').hide();
-                    $('.btnhid').show();
-                    $('#' + selectedOption).show();
-                }
-            });
+                        <button type="button" class="btn btn-primary btn-sm px-2 mt-3 mb-0 btnhid" style="float: right;"
+                            id="settime" >Set Time</button><br><br>
 
-            $('#dayweek').change(function() {
-                var selectedOption = $(this).val();
+                        <table class="table table-bordered table-responsive mt-4" id="ttable">
+                            <thead>
+                                <tr>
+                                    <th style="width: 5%">#</th>
+                                    <th style="width: 45%">Day/Week</th>
+                                    <th style="width: 20%">Open Time</th>
+                                    <th style="width: 20%">Close Time</th>
+                                    <th style="width: 10%">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                    if(!empty($opV)){
+                                        $p=1;
+                                       foreach ($dataVal  as $resval) {
+                                        $cs="counter_section".$p;
+                                ?>
+                                <tr>
+                                    <td>{{$p}}</td>
+                                    <td>{{($opV=="day") ? $resval : Helper::weekDays($resval)}} </td>
 
-                if (selectedOption == 'day') {
-                    $('.month').hide();
-                    $('.showday').show();
-                    $('.thide').show();
-                    // $('.add').show();
-                } else if (selectedOption == 'week') {
-                    $('.showday').hide();
-                    $('.month').show();
-                    $('.thide').show();
-                    // $('.add').show();
-                }
-            });
-        });
-    </script>
+                                    <td>
+                                        <input type="hidden" name="{{$cs}}" value="{{$valueArray[$cs]}}" id="{{$cs}}">
+                                        <input type="time" class="form-control" name="start_time{{$p}}_1" value="{{$valueArray['start_time'.$p.'_1']}}">
+                                        <br>
+                                        <div id="start_time{{$p}}_1">
+                                            <?php
+                                            if (isset($valueArray[$cs]) && $valueArray[$cs] > 1) {
+                                                for ($csc = 2; $csc <= $valueArray[$cs]; $csc++) {
+                                                    $scs = "start_time" . $p . "_" . $csc;
+                                            ?>
+                                                    <input type="time" class="form-control" name="<?php echo $scs; ?>" value="<?php echo isset($valueArray[$scs]) ? $valueArray[$scs] : ''; ?>">
+                                                    <br>
+                                            <?php
+                                                }
+                                            }
+                                            ?>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <input type="time" class="form-control" name="end_time{{$p}}_1"  value="{{$valueArray['end_time'.$p.'_1']}}">
+                                        <br>
+                                        <div id="end_time{{$p}}_1">
+                                            <?php
+                                            if (isset($valueArray[$cs]) && $valueArray[$cs] > 1) {
+                                                for ($csc = 2; $csc <= $valueArray[$cs]; $csc++) {
+                                                    $scs = "end_time" . $p . "_" . $csc;
+                                            ?>
+                                                    <input type="time" class="form-control" name="<?php echo $scs; ?>" value="<?php echo isset($valueArray[$scs]) ? $valueArray[$scs] : ''; ?>">
+                                                    <br>
+                                            <?php
+                                                }
+                                            }
+                                            ?>
+                                        </div>
+                                    </td>
+                                    <td><button type="button" class="btn btn-success btn-sm px-2" onclick="addTime('{{$p}}')" style="float: right;">Add Time</button>
+                                    </td>
+                                </tr>
+                              <?php $p++; } }  ?>
+                            </tbody>
+                            {{-- @if ($values->opt==null) --}}
+                            <tbody id="jsTable">
 
-<script>
-    document.addEventListener('click', function(event) {
-        if (event.target.classList.contains('remove-button1')) {
-            removeTime(event.target);
-        }
-    });
+                            </tbody>
+                            {{-- @endif --}}
 
-    function removeTime(button) {
-        var table = document.getElementById('timest');
-        var row = button.closest('tr');
+                        </table>
 
-        if (row) {
-            table.removeChild(row);
-            var counterSec = Number(document.getElementById('counter_sec').value);
-            document.getElementById('counter_sec').value = (counterSec - 1);
-        }
-    }
-    var addTime = function(p) {
-        // document.getElementById('add').disabled = true;
-        let counterSec = Number(document.getElementById('counter_section').value);
-        // counter = row.length;
-        $.ajax({
-            url: "{{ url('ajaxdoctimetable') }}",
-            type: 'GET',
-            data: {
-                'call': (counterSec + 1),
-            },
-            // dataType: 'html',
-            success: function(data) {
-               // console.log(data[0]);
-               $('#start_time'+p).append(data[0]);
-               $('#end_time'+p).append(data[1]);
-                document.getElementById('counter_section').value = (counterSec + 1);
-                // document.getElementById('add').disabled = false;
-            },
-            error: function(request, error) {
-                // document.getElementById('add').disabled = false;
-                console.log("Request: Fail");
-            }
-        });
-    }
+                        <button type="submit" class="btn btn-primary btn-sm px-2 mt-3 mb-0" style="float: right; display:none;" id="sbutton">Submit</button>
 
-</script>
+                    </div>
+                </div>
+                <!--end card-body-->
+            </div>
+            <!--end card-->
+
+            </form>
+        </div>
+        <!--end col-->
+
+        <div class="col-lg-4 mx-auto">
+            <div class="card dr-pro-pic">
+                <div class="card-body">
+                    <div class="w3-bar w3-black">
+                        <p style="text-align: center;"><b>Doctor Timetable</b></p>
+                    </div>
+
+                    <div id="London" class="w3-container city">
+                        <table class="table table-bordered table-responsive mt-2">
+                            <thead>
+                                <tr>
+                                    <th>Day/Week</th>
+                                    <th>Start Time</th>
+                                    <th>End Time</th>
+                                </tr>
+                            </thead>
+
+                            @if ($values->opt != null)
+                            <tbody>
+                                <?php
+                                $valuess = DB::table('doctors_times')->where('doc_id', $doctrs->id)->where('status', '1')->get();
+                                foreach ($valuess as $data) {
+                                    $result = json_decode($data->value, true);
+
+                                    // Check if "week" is set to a valid array or "null"
+                                    if ($result['opt'] == "day") {
+                                        $dw_datas = $result['day'];  // Use $result['day'] directly
+                                    } elseif ($result['opt'] == "week" && is_array($result['week'])) {
+                                        $dw_datas = $result['week'];  // Use $result['week'] directly
+                                    } else {
+                                        $dw_datas = [];  // Set to an empty array or handle the case as needed
+                                    }
+
+                                    for ($p = 1; $p <= count($dw_datas); $p++) {
+                                        echo '<tr>';
+                                        echo '<td>' . ($result['opt'] == "week" ? Helper::weekDays($dw_datas[$p - 1]) : $dw_datas[$p - 1]) . '</td>';
+                                        echo '<td>';
+                                        for ($pc = 1; $pc <= $result['counter_section' . $p]; $pc++) {
+                                            $key = 'start_time' . $p . '_' . $pc;
+                                            echo isset($result[$key]) ? $result[$key] . '<br>' : '';  // Check if the key exists
+                                        }
+                                        echo '</td>';
+                                        echo '<td>';
+                                        for ($pc = 1; $pc <= $result['counter_section' . $p]; $pc++) {
+                                            $key = 'end_time' . $p . '_' . $pc;
+                                            echo isset($result[$key]) ? $result[$key] . '<br>' : '';  // Check if the key exists
+                                        }
+                                        echo '</td>';
+                                        echo '</tr>';
+                                    }
+                                }
+                                ?>
+                            </tbody>
+                            @endif
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.js"></script>
 
 @push('js')
     <script>

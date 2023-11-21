@@ -30,6 +30,43 @@
     }
 </style>
 @section('content')
+
+<?php
+// $opt = null;
+
+$values = DB::table('doctors_times')->where('status', '1')->get();
+// dump($values);
+foreach ($values as $data) {
+    $result = json_decode($data->value,true);
+    //$dataArray = json_encode($result, true);
+    if($result['opt']=="day"){
+        $dw_datas=json_decode($result['day']);
+
+    }elseif($result['opt']=="week"){
+        $dw_datas=json_decode($result['week']);
+    }
+   // dump($dw_datas);
+    $p=1;
+    foreach ($dw_datas as $dw_data) {
+        echo "Day/Week=>";
+        echo ($result['opt']=="week")?Helper::weekDays($dw_data):$dw_data;
+        echo '<br>';
+        echo '==>Time Count'.$result['counter_section'.$p];
+        echo '<br>';
+        for($pc=1;$pc<=$result['counter_section'.$p];$pc++){
+            echo '====>Start Time=>'.$result['start_time'.$p.'_'.$pc];
+        echo '<br>';
+        echo '====>End Time=>'.$result['end_time'.$p.'_'.$pc];
+        echo '<br>';
+        }
+
+        $p++;
+    }
+
+}
+//die;
+
+?>
     <div class="row">
         <div class="col-md-3">
             <div class="fc-external-events">
@@ -198,8 +235,12 @@
                             </tr>
                         </tbody>
                     </table>
+
+                    {{-- <p>{{$opt}}</p> --}}
+
                 </div>
             </div>
         </div>
     </div>
+
 @endsection

@@ -124,8 +124,8 @@
                             <div class="col-md-3">
                                 <label for="exampleInputUsername1">Degree</label>
                                 <div class="input-group">
-                                    <?php $degrees = DB::table('degrees')->where('status', '1')->get(); ?>
-                                    <select id="selectMultiple" class="form-control" multiple="multiple" data-placeholder="Select Degree" name="degree_id[]">
+                                    <?php //$degrees = DB::table('degrees')->where('status', '1')->get(); ?>
+                                    {{-- <select id="selectMultiple" class="form-control" multiple="multiple" data-placeholder="Select Degree" name="degree_id[]">
                                         <option value="">Select Degree</option>
                                         @php
                                          $array_str = $data->degree_id;
@@ -136,10 +136,22 @@
                                             // $selectedDegrees = json_decode($data->degree_id);
                                         @endphp
                                         {{ $data->degree_id}}
-                                        {{-- @foreach ($degrees as $degree)
+                                        @foreach ($degrees as $degree)
                                             <option value="{{ $degree->id }}" @if(is_array($selectedDegrees) && in_array($degree->id, $selectedDegrees)) selected @endif>{{ $degree->name }}</option>
-                                        @endforeach --}}
-                                    </select>
+                                        @endforeach
+                                    </select> --}}
+                                    <?php
+                                    $degrees = DB::table('degrees')->where('status', '1')->get();
+                                    $selectedDegrees = json_decode($data->degree_id);
+                                    ?>
+
+                                <select id="selectMultiple" class="form-control" multiple="multiple" data-placeholder="Select Degree" name="degree_id[]">
+                                    <option value="">Select Degree</option>
+                                    @foreach ($degrees as $degree)
+                                        <option value="{{ $degree->id }}" @if(in_array($degree->id, $selectedDegrees)) selected @endif>{{ $degree->name }}</option>
+                                    @endforeach
+                                </select>
+
                                 </div>
                             </div>
 

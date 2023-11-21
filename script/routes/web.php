@@ -6,6 +6,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\DegreeController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\DoctorController;
+use App\Http\Controllers\VideoController;
+use App\Http\Controllers\PatientRegister;
 use Illuminate\Http\Request;
 /*
 |--------------------------------------------------------------------------
@@ -38,9 +40,17 @@ date_default_timezone_set('Asia/Kolkata');
             return $request->t1;
         });
 
-        Route::get('/patient-registration', function (Request $request) {
-            return view('admin.pages.from.patient-registration', compact('request'));
-        });
+
+        // Route::get('/patient-registration', function (Request $request) {
+        //     return view('admin.pages.from.patient-registration', compact('request'));
+        // });
+
+        // Route::get('/patient-registration',[PatientRegistration::class,'rolls']);
+
+        Route::resource('patient-registration', PatientRegister::class);
+
+        Route::get('list-patient', [PatientRegister::class,'listPatient'])->name('patient-registration.list-patient');
+
         Route::get('/table', function (Request $request) {
             return view('admin.pages.from.table', compact('request'));
         });
@@ -132,6 +142,8 @@ date_default_timezone_set('Asia/Kolkata');
         Route::get('ajaxdoctortime', [DoctorController::class,'ajaxDoctorTime'])->name('doctor.ajaxdoctortime');
         Route::post('doctime/{id}', [DoctorController::class,'docTime'])->name('doctor.doctime');
 
+        Route::get('/doctime-response', [DoctorController::class,'doctimeResponse'])->name('doctor.doctime-response');
+
         Route::get('doctimetable', [DoctorController::class,'doctimeTable'])->name('doctor.doctimetable');
         Route::get('ajaxdoctimetable', [DoctorController::class,'ajaxdoctimeTable'])->name('doctor.ajaxdoctimetable');
         /////////////////////////// Start Users ///////////////////////////////////////////////////
@@ -144,6 +156,9 @@ date_default_timezone_set('Asia/Kolkata');
         Route::post('/userdelete/{id}', [AdminController::class,'userDelete']);
 
         /////////////////////////// End Users ///////////////////////////////////////////////////
+
+        // Route::resource('video', VideoController::class);
+        // Route::post('video.videostatus', [VideoController::class,'videostatus'])->name('video.videostatus');
         });
         // /////////////////End Super Admin/////////////////////////////////////////////
    });

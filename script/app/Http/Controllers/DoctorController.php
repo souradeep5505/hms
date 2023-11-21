@@ -40,8 +40,8 @@ class DoctorController extends Controller
         // return $request->department_id;
         // die;
        $table=new Doctor;
-       $table->org_id=1;//$request->org_id;
-       $table->entry_id=1;//$request->entry_id;
+       $table->org_id=$request->org_id;
+       $table->entry_id=$request->entry_id;
        $table->f_name=$request->f_name;
        $table->l_name=$request->l_name;
        $table->email=$request->email;
@@ -61,15 +61,22 @@ class DoctorController extends Controller
        $table->entry_by='sa';//$request->entry_by;
        $table->status='1';
        $table->save();
-       for($i=1;$i<=$request->counter_sec; $i++){
-       $table1=new DoctorsTime;
-       $table1->doctor_id=$table->id;
-       $table1->day=$request['day'.$i];
-       $table1->start_time=$request['start_time'.$i];
-       $table1->end_time=$request['end_time'.$i];
-       $table1->slot=$request['slot'.$i];
-       $table1->save();
-       }
+    //    for($i=1;$i<=$request->counter_sec; $i++){
+    //    $table1=new DoctorsTime;
+    //    $table1->doctor_id=$table->id;
+    //    $table1->day=$request['day'.$i];
+    //    $table1->start_time=$request['start_time'.$i];
+    //    $table1->end_time=$request['end_time'.$i];
+    //    $table1->slot=$request['slot'.$i];
+    //    $table1->save();
+    //    }
+       $table2=new DoctorsTime;
+       $table2->org_id=$request->org_id;
+       $table2->doc_id=$table->id;
+       $table2->opt=null;
+       $table2->value=$request->value;
+       $table2->status='1';
+       $table2->save();
        toast('You have successfully Added','success');
        return back();
     }
@@ -224,7 +231,7 @@ class DoctorController extends Controller
     </td>
     <td>
         <div id="mulDay'.$request->call.'" style="display: none;">
-            <select id="selectMultipleDay'.$request->call.'" class="form-control" multiple="multiple" data-placeholder="Select Day" >
+            <select id="selectMultipleDay'.$request->call.'" name="mul_day'.$request->call.'[]" class="form-control" multiple="multiple" data-placeholder="Select Day" >
                 <option value="">Select Day</option>';
                 for($day=1;$day<=31;$day++){
                     $html .= '<option value="'.$day.'">'.$day.'</option>';
@@ -232,7 +239,7 @@ class DoctorController extends Controller
         $html .= '</select>
         </div>
         <div id="mulWeek'.$request->call.'" style="display: none;">
-            <select id="selectMultipleWeek'.$request->call.'" class="form-control" multiple="multiple" data-placeholder="Select Week" >
+            <select id="selectMultipleWeek'.$request->call.'" name="mul_week'.$request->call.'[]" class="form-control" multiple="multiple" data-placeholder="Select Week" >
                 <option value="">Select Week</option>';
                 for ($wk=1;$wk<=7;$wk++){
                     $html .= '<option value="'.$wk.'">'.Helper::weekDays($wk).'</option>';
@@ -263,32 +270,15 @@ function doctortime(Request $request,$id)
 
 function docTime(Request $request,$id)
 {
-
-    // for($i=1;$i<=$request->counter_sec; $i++){
-    //     $table1=new DocTimeMonth;
-    //     $table1->doc_time_id=1;
-
-    //     $table1->months=$request['months'.$i];
-
-    //     $mul_day=json_encode($request['mul_day'.$i],true);
-    //     $table1->mul_day=$mul_day;
-
-    //     $mul_week=json_encode($request['mul_week'.$i],true);
-    //     $table1->mul_week=$mul_week;
-
-    //     $table1->day_week=$request->day_week;
-    //     $table1->save();
-    //     }
-
-    return $request->all();
-    die;
-    $table=new DoctorsTime;
+    // return $request->all();
+    // die;
+    $table = DoctorsTime::find($id);
     $table->org_id='1';
-    $table->doc_id='1';
+    $table->doc_id=$request->doc_id;
     $table->opt=$request->opt;
-    $table->value=$request->value;
+    $table->value=json_encode($request->all());
     $table->slot=$request->slot;
-    $table->status='0';
+    //$table->status='1';
     $table->save();
     toast('You have successfully updated','success');
     return back();
@@ -303,12 +293,13 @@ function doctimeTable(Request $request) {
 
 public function ajaxdoctimeTable(Request $request)
 {
-    $html1 = '<br><input type="time" class="form-control" name="start_time' . $request->input('call') . '">';
+    $html1 = '<input type="time" class="form-control" name="start_time'.$request->p.'_' . $request->call . '"><br>';
 
-    $html2 = '<br><input type="time" class="form-control" name="end_time' . $request->input('call') . '">';
+    $html2 = '<input type="time" class="form-control" name="end_time'.$request->p.'_' . $request->call . '"><br>';
     $html=[
         $html1, $html2
     ];
     return $html;
 }
+
 }

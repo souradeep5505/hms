@@ -8,6 +8,8 @@ use App\Models\Subscription;
 use App\Models\Roll;
 use App\Models\Permission;
 use App\Models\Organization;
+use App\Models\Doctor;
+use App\Models\Department;
 use Illuminate\Support\Facades\Http;
 class Helper
 {
@@ -152,4 +154,74 @@ class Helper
         ];
         return $month[$id];
     }
+
+    public static function asso_year()
+    {
+        $year = date('y');
+         $month = date('m');
+         if($month>'3'){
+           $fyear = $year.'-'.($year+1);
+         }else{
+          $fyear = ($year-1).'-'.$year;
+         }
+         return $fyear;
+        }
+
+    public static function generateCode($lcode="",$len="")
+    {
+        $ccode = $lcode + 1 ;
+        // echo $ccode;
+        $ccode_len = strlen($ccode);
+        // echo $ccode_len;
+        // die;
+        $add_zero='';
+        for($i=0;$i<($len-$ccode_len);$i++){
+            $add_zero .= '0';
+        }
+        // echo $add_zero.$ccode;
+        // die;
+    return $final_code = $add_zero.$ccode;
+    }
+
+    public static function genCodeNo($inv_no = '')
+    {
+        $year = self::asso_year();
+        if ($inv_no > '0') {
+            $arrdata = explode('/', $inv_no);
+            // print_r($arrdata);
+            // die;
+            //$data1=$arrdata[1];
+            $data1 = isset($arrdata[1]) ? $arrdata[1] : ''; // Define $data1 here
+
+            if ($year == $data1) {
+                $id = $arrdata[2];
+            } else {
+                $id = '0';
+            }
+        } else {
+            $id = $inv_no;
+        }
+        $len = 8;
+        $id_len = strlen($id);
+        // echo $id_len;
+        if ($id_len > $len) {
+            $len1 = $id_len + 1;
+        } else {
+            $len1 = $len;
+        }
+        return 'SL-PAT/' . self::generateCode($id, $len1);
+    }
+
+        public static function DoctorName($id)
+        {
+            $data = Doctor::find($id);
+            $full_name = (!empty($data->id)) ? strtoupper($data->f_name . ' ' . $data->l_name) : '';
+            return $full_name;
+        }
+
+        public static function DepartmentName($id)
+        {
+            $data=Department::find($id);
+            return (!empty($data->id)) ? $data->name : '';
+        }
 }
