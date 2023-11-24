@@ -155,9 +155,6 @@
                                 </div>
                             </div>
 
-
-
-
                             <div class="col-md-3">
                                 <label for="exampleInputUsername1">Department</label>
                                 <?php $departments = DB::table('departments')

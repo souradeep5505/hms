@@ -40,7 +40,7 @@
         font-size: 0.8125rem;
         font-weight: 400;
         line-height: 1;
-        color: #c9c8d3;
+        color: #0c0c0c;
         background-clip: padding-box;
         border: 1px solid #e8ebf3;
         border-radius: 4px;
@@ -227,11 +227,6 @@
     .form-check-input{
         margin-top:0em !important;
     }
-    .border-btn {
-        border: solid 1px #bfbfbf;
-        padding: 9px;
-        background: #F5F5F5;
-    }
 </style>
 
 <script>
@@ -326,8 +321,9 @@
                 <div class="card-body">
                     <div class="col-11 col-sm-10 col-md-10 col-lg-12 col-xl-12 text-center p-0 mb-2">
                         <h2 id="heading">New Patient Registration</h2>
-                        <form id="msform" action="{{route('patient-registration.store')}}" method="post" enctype="multipart/form-data">
+                        <form id="msform" action="{{route('patient-registration.update',$data->id)}}" method="post" enctype="multipart/form-data">
                             <!-- progressbar -->
+                            <input type="hidden" name="_method" value="PATCH">
                             <ul id="progressbar">
                                 <li class="active" id="account"><strong>Account</strong></li>
                                 <li id="personal"><strong>Date</strong></li>
@@ -344,68 +340,68 @@
                                         <div class="col-md-3">
                                             <label class="fieldlabels col-form-label"> First Name *</label>
                                             <input type="text" name="f_name" placeholder="First Name"
-                                                class="form-control" required/>
+                                                class="form-control" required value="{{$data->f_name}}"/>
                                         </div>
                                         <div class="col-md-3">
                                             <label class="fieldlabels col-form-label"> Last Name</label>
                                             <input type="text" name="l_name" placeholder="Last Name"
-                                                class="form-control" />
+                                                class="form-control" value="{{$data->l_name}}"/>
                                         </div>
                                         <div class="col-md-1">
                                             <label class="fieldlabels col-form-label"> Gender *</label>
                                             <select class="form-select" name="gender" id="floatingSelect" aria-label="Floating label select example" required>
-                                                <option value="">Select</option>
-                                                <option value="male">Male</option>
-                                                <option value="female">Female</option>
+                                                <option value="">select</option>
+                                                <option value="male" <?php if ($data->gender == 'male') { echo 'selected';} ?>>Male</option>
+                                                <option value="female"<?php if ($data->gender == 'female') {echo 'selected';} ?>>Female</option>
                                             </select>
                                         </div>
                                         <div class="col-md-2">
                                             <label class="fieldlabels col-form-label"> Marital Status *</label>
                                             <select class="form-select" name="marital_status" id="floatingSelect" naria-label="Floating label select example" required>
                                                 <option value="">Select</option>
-                                                <option value="married">Married</option>
-                                                <option value="unmarried">Unmarried</option>
+                                                <option value="married" <?php if ($data->marital_status == 'married') { echo 'selected';} ?>>Married</option>
+                                                <option value="unmarried"<?php if ($data->marital_status == 'unmarried') {echo 'selected';} ?>>Unmarried</option>
                                             </select>
                                         </div>
                                         <div class="col-md-2">
                                             <label class="fieldlabels col-form-label"> LMP</label>
-                                            <input type="text" name="lmp" placeholder="LMP" class="form-control" />
+                                            <input type="text" name="lmp" placeholder="LMP" class="form-control" value="{{$data->lmp}}"/>
                                         </div>
                                         <div class="col-md-1">
                                             <label class="fieldlabels col-form-label"> Handedness</label>
                                             <select class="form-select" name="handed" id="floatingSelect" aria-label="Floating label select example">
                                                 <option selected>Select</option>
-                                                <option value="left">Left</option>
-                                                <option value="right">Right</option>
+                                                <option value="left" <?php if ($data->handed == 'left') { echo 'selected';} ?>>Left</option>
+                                                <option value="right"<?php if ($data->handed == 'right') {echo 'selected';} ?>>Right</option>
                                             </select>
                                         </div>
                                         <div class="col-md-2">
                                             <label class="fieldlabels col-form-label"> Blood Group</label>
                                             <select class="form-select" name="blood_group" id="floatingSelect" aria-label="Floating label select example">
                                                 <option selected>Select</option>
-                                                <option value="a+">A+</option>
-                                                <option value="a-">A-</option>
-                                                <option value="b+">B+</option>
-                                                <option value="b-">B-</option>
-                                                <option value="o+">O+</option>
-                                                <option value="o-">O-</option>
-                                                <option value="ab+">AB+</option>
-                                                <option value="ab-">AB-</option>
+                                                <option value="a+" <?php if ($data->blood_group == 'a+') { echo 'selected';} ?>>A+</option>
+                                                <option value="a-" <?php if ($data->blood_group == 'a-') { echo 'selected';} ?>>A-</option>
+                                                <option value="b+" <?php if ($data->blood_group == 'b+') { echo 'selected';} ?>>B+</option>
+                                                <option value="b-" <?php if ($data->blood_group == 'b-') { echo 'selected';} ?>>B-</option>
+                                                <option value="o+" <?php if ($data->blood_group == 'o+') { echo 'selected';} ?>>O+</option>
+                                                <option value="o-" <?php if ($data->blood_group == 'o-') { echo 'selected';} ?>>O-</option>
+                                                <option value="ab+" <?php if ($data->blood_group == 'ab+') { echo 'selected';} ?>>AB+</option>
+                                                <option value="ab-" <?php if ($data->blood_group == 'ab-') { echo 'selected';} ?>>AB-</option>
                                             </select>
                                         </div>
                                         <div class="col-md-2">
                                             <label class="fieldlabels col-form-label"> Blood Sugar</label>
                                             <input type="text" name="bs" placeholder="Blood Sugar"
-                                                class="form-control" />
+                                                class="form-control" value="{{$data->bs}}"/>
                                         </div>
                                         <div class="col-md-2">
                                             <label class="fieldlabels col-form-label"> DOB[dd/mm/yyyy]</label>
                                             <input type="date" name="dob" placeholder="dd/mm/yyyy"
-                                                class="form-control" required/>
+                                                class="form-control" value="{{$data->dob}}" required />
                                         </div>
                                         <div class="col-md-1">
                                             <label class="fieldlabels col-form-label"> Age *</label>
-                                            <input type="text" name="age" placeholder="Age" class="form-control" required/>
+                                            <input type="text" name="age" placeholder="Age" class="form-control" value="{{$data->age}}" required/>
                                         </div>
                                         {{-- <div class="col-md-1">
                                             <label class="fieldlabels col-form-label"> Age: *</label>
@@ -414,46 +410,46 @@
                                         <div class="col-md-1">
                                             <label class="fieldlabels col-form-label"> Height(cm)</label>
                                             <input type="text" name="height" placeholder="Height"
-                                                class="form-control" />
+                                                class="form-control" value="{{$data->height}}" />
                                         </div>
                                         <div class="col-md-1">
                                             <label class="fieldlabels col-form-label"> Weight(kg)</label>
                                             <input type="text" name="weight" placeholder="Weight"
-                                                class="form-control" />
+                                                class="form-control" value="{{$data->weight}}"/>
                                         </div>
                                         <div class="col-md-1">
                                             <label class="fieldlabels col-form-label"> BP(Systolic)</label>
                                             <input type="text" name="bp_sy" placeholder="BP"
-                                                class="form-control" />
+                                                class="form-control" value="{{$data->bp_sy}}"/>
                                         </div>
                                         <div class="col-md-2">
                                             <label class="fieldlabels col-form-label"> BP(Diastolic)</label>
                                             <input type="text" name="bp_di" placeholder="BP"
-                                                class="form-control" />
+                                                class="form-control" value="{{$data->bp_di}}"/>
                                         </div>
                                         <div class="col-md-3">
                                             <label class="fieldlabels col-form-label"> Occupation *</label>
                                             <select class="form-select" name="occupation" id="floatingSelect" aria-label="Floating label select example">
                                                 <option selected>Select</option>
-                                                <option value="doctor">Doctor</option>
-                                                <option value="teacher">Teacher</option>
-                                                <option value="engineer">Engineer</option>
+                                                <option value="doctor" <?php if ($data->occupation == 'doctor') { echo 'selected';} ?>>Doctor</option>
+                                                <option value="teacher" <?php if ($data->occupation == 'teacher') { echo 'selected';} ?>>Teacher</option>
+                                                <option value="engineer" <?php if ($data->occupation == 'engineer') { echo 'selected';} ?>>Engineer</option>
                                             </select>
                                         </div>
                                         <div class="col-md-3">
                                             <label class="fieldlabels col-form-label"> Mobile No *</label>
                                             <input type="text" name="mobile" placeholder="Mobile No"
-                                                class="form-control" required/>
+                                                class="form-control" value="{{$data->mobile}}" required/>
                                         </div>
                                         <div class="col-md-3">
                                             <label class="fieldlabels col-form-label"> Email Id</label>
                                             <input type="email" name="email" placeholder="Email Id"
-                                                class="form-control" required/>
+                                                class="form-control" value="{{$data->email}}" required/>
                                         </div>
                                         <div class="col-md-3">
                                             <label class="fieldlabels col-form-label"> Address</label>
                                             <input type="text" name="address" placeholder="Address"
-                                                class="form-control" />
+                                                class="form-control" value="{{$data->address}}" />
                                         </div>
                                     </div>
                                 </div>
@@ -469,7 +465,8 @@
                                             <select name="depart_id" class="form-select" id="floatingSelect" aria-label="Floating label select example" required>
                                             <option value="" selected>Select</option>
                                             @foreach ( $departments as $dep)
-                                            <option value="{{$dep->id}}">{{$dep->name}}</option>
+                                            <option value="{{$dep->id}}"
+                                            @selected($dep->id==$data->depart_id)>{{$dep->name}}</option>
                                             @endforeach
                                         </select>
                                         </div>
@@ -479,14 +476,15 @@
                                             <select name="doc_id" class="form-select" id="floatingSelect" aria-label="Floating label select example" required>
                                             <option value="" selected>Select</option>
                                             @foreach ( $doctors as $doc)
-                                            <option value="{{$doc->id}}">{{ strtoupper($doc->f_name . ' ' . $doc->l_name) }} </option>
+                                            <option value="{{$doc->id}}"
+                                            @selected($doc->id==$data->doc_id)>{{ strtoupper($doc->f_name . ' ' . $doc->l_name) }} </option>
                                             @endforeach
                                         </select>
                                         </div>
                                         <div class="col-md-2">
                                             <label class="fieldlabels col-form-label"> Day</label>
                                             <input type="date" name="book_date"
-                                                placeholder="date"class="form-control" />
+                                                placeholder="date"class="form-control" value="{{$data->book_date}}"/>
                                         </div>
                                         <div class="col-md-2">
                                             <label class="fieldlabels col-form-label"></label>
@@ -499,81 +497,52 @@
                                     value="Next" class="form-control" />
                                 <input type="button" name="previous"
                                     class="previous action-button-previous btn btn-sm btn-info" value="Previous" />
-
-                                    <div class="avil-time mt-5">
-                                        <hr style="width: 100%;border: 1px solid;">
-                                        <p style="text-align: center;"><strong>Avail Time</strong></p>
-                                            <div class="border-btn">
-                                                <button type="button" class="btn btn-sm btn-outline-primary">7:30</button>
-                                                <button type="button" class="btn btn-sm btn-outline-primary">7:30</button>
-                                                <button type="button" class="btn btn-sm btn-outline-primary">7:30</button>
-                                                <button type="button" class="btn btn-sm btn-outline-primary">7:30</button>
-                                                <button type="button" class="btn btn-sm btn-outline-primary">7:30</button>
-                                                <button type="button" class="btn btn-sm btn-outline-primary">7:30</button>
-                                                <button type="button" class="btn btn-sm btn-outline-primary">7:30</button>
-                                                <button type="button" class="btn btn-sm btn-outline-primary">7:30</button>
-                                                <button type="button" class="btn btn-sm btn-outline-primary">7:30</button>
-                                                <button type="button" class="btn btn-sm btn-outline-primary">7:30</button>
-                                                <button type="button" class="btn btn-sm btn-outline-primary">7:30</button>
-                                                <button type="button" class="btn btn-sm btn-outline-primary">7:30</button>
-                                                <button type="button" class="btn btn-sm btn-outline-primary">7:30</button>
-                                                <button type="button" class="btn btn-sm btn-outline-primary">7:30</button>
-                                                <button type="button" class="btn btn-sm btn-outline-primary">7:30</button>
-                                                <button type="button" class="btn btn-sm btn-outline-primary">7:30</button>
-                                                <button type="button" class="btn btn-sm btn-outline-primary">7:30</button>
-                                                <button type="button" class="btn btn-sm btn-outline-primary">7:30</button>
-                                                <button type="button" class="btn btn-sm btn-outline-primary">7:30</button>
-                                                <button type="button" class="btn btn-sm btn-outline-primary">7:30</button>
-                                                <button type="button" class="btn btn-sm btn-outline-primary">7:30</button>
-                                                <button type="button" class="btn btn-sm btn-outline-primary">7:30</button>
-                                        </div>
-                                    </div>
                             </fieldset>
-
                             <fieldset>
                                 <div class="form-card">
                                     <div class="row">
                                         <div class="col-md-2">
                                             <label class="fieldlabels col-form-label"> Total Amount *</label>
                                             <input type="text" name="fees" placeholder="Total Amount"
-                                                class="form-control" required/>
+                                                class="form-control" value="{{$data->fees}}" required/>
                                         </div>
                                         <div class="col-md-2">
                                             <label class="fieldlabels col-form-label"> Paid Amount *</label>
                                             <input type="text" name="total_amount" placeholder="Paid Amount"
-                                                class="form-control" required/>
+                                                class="form-control" value="{{$data->total_amount}}" required/>
                                         </div>
                                         <div class="col-md-1">
                                             <label class="fieldlabels col-form-label"> Discount</label>
                                             <input type="text" name="discount" placeholder="Discount"
-                                                class="form-control" />
+                                                class="form-control" value="{{$data->discount}}" />
                                         </div>
                                         <div class="col-md-1">
                                             <label class="fieldlabels col-form-label"> Due</label>
                                             <input type="text" name="due" placeholder="Due"
-                                                class="form-control" />
+                                                class="form-control" value="{{$data->due}}" />
                                         </div>
                                         <div class="col-md-3">
                                             <label class="form-check-label radio2" for="flexRadioDefault1">Payment Method</label>
 
-                                            <input class="form-check-input radio" type="radio" name="payment_method" id="flexRadioDefault1" value="cash">
+                                            <input class="form-check-input radio" type="radio" name="payment_method" id="flexRadioDefault1" value="cash" <?php if ($data->payment_method == 'cash') { echo 'checked';} ?>>
                                             <i class="fa fa-inr" aria-hidden="true">&nbsp;Cash</i>
 
-                                            <input class="form-check-input radio" type="radio" name="payment_method" id="flexRadioDefault2" value="card">
+                                            <input class="form-check-input radio" type="radio" name="payment_method" id="flexRadioDefault2" value="card" <?php if ($data->payment_method == 'card') { echo 'checked';} ?>>
                                             <i class="fa fa-credit-card" aria-hidden="true">&nbsp;Card</i>
-                                            <input class="form-check-input radio" type="radio" name="payment_method" id="flexRadioDefault3" value="online">
+
+                                            <input class="form-check-input radio" type="radio" name="payment_method" id="flexRadioDefault3" value="online" <?php if ($data->payment_method == 'online') { echo 'checked';} ?>>
                                             <i class="fa fa-money" aria-hidden="true"></i>&nbsp;Online</i>
                                         </div>
                                         <div class="col-md-3">
                                             <label class="fieldlabels col-form-label"> Comments</label>
                                             <input type="text" name="comments" placeholder="Comments"
-                                                class="form-control" />
+                                                class="form-control" value="{{$data->comments}}"/>
                                         </div>
                                     </div>
                                 </div>
                                 {{-- <input type="button" name="next" class="next action-button btn btn-primary btn-sm"
                                     value="Submit" /> --}}
-                                    <button type="submit" class="btn btn-primary btn-sm" style="float: right; margin-top:10px;">Submit</button>
+                                    <button type="submit" class="btn btn-primary btn-sm" style="float: right; margin-top:10px;">Update</button>
                                 <input type="button" name="previous"
                                     class="previous action-button-previous btn btn-sm btn-info" value="Previous" />
                             </fieldset>
@@ -592,7 +561,6 @@
                                     </div>
                                 </div>
                             </fieldset>
-
                         </form>
                     </div>
                 </div>

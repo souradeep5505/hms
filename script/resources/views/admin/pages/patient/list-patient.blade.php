@@ -61,7 +61,9 @@
                         <td>Booked</td>
                         @endif
                         {{-- <td>{{$patient->total_amount}}</td> --}}
-                        <td><button type="button" class="btn btn-success btn-xs">Confirm</button></td>
+                        <td><button type="button" class="btn btn-success btn-xs">Confirm</button>
+                            <a href="{{route('patient-registration.edit',$patient->id)}}" class="mr-2" title="Edit"><i class="fas fa-edit text-warning"></i></a>
+                        </td>
                     </tr>
                 </tbody>
                 <?php  } ?>

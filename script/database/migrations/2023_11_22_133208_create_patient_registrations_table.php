@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('patient_registrations', function (Blueprint $table) {
             $table->id();
+            $table->integer('org_id')->nullable();
+            $table->integer('depart_id')->nullable();
+            $table->integer('doc_id')->nullable();
             $table->string('patient_id')->nullable();
             $table->string('f_name')->nullable();
             $table->string('l_name')->nullable();
@@ -32,8 +35,6 @@ return new class extends Migration
             $table->string('mobile')->nullable();
             $table->string('email')->nullable();
             $table->string('address')->nullable();
-            $table->integer('depart_id')->nullable();
-            $table->integer('doc_id')->nullable();
             $table->string('book_date')->nullable();
             $table->string('fees')->nullable();
             $table->string('total_amount')->nullable();
